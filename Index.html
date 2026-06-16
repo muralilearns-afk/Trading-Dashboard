@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Trading Dashboard</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0d0f14;--bg2:#131720;--bg3:#1a1f2e;--border:#2a3045;--text:#e2e8f0;--muted:#7a8499;--green:#22c55e;--red:#ef4444;--yellow:#f59e0b;--blue:#3b82f6}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;font-size:13px}
+#hdr{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.logo{font-size:15px;font-weight:700;color:var(--blue)}
+.hdr-mid{display:flex;align-items:center;gap:10px}
+#clock{font-size:13px;font-variant-numeric:tabular-nums}
+#mbadge{padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
+#lfetch{font-size:10px;color:var(--muted)}
+.hdr-r{display:flex;align-items:center;gap:8px}
+#setbtn{background:transparent;border:1px solid var(--border);color:var(--muted);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:12px}
+#setbtn:hover{border-color:var(--blue);color:var(--text)}
+.mgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:10px 14px}
+@media(max-width:1100px){.mgrid{grid-template-columns:repeat(2,1fr)}}
+.pcard{background:var(--bg2);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.pchd{padding:7px 12px;font-size:10px;font-weight:700;letter-spacing:.7px;color:var(--muted);text-transform:uppercase;border-bottom:1px solid var(--border)}
+#csec{padding:10px 14px}
+#cctrl{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;align-items:center}
+.sttl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--muted)}
+.cbtn{background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:3px 9px;border-radius:4px;cursor:pointer;font-size:11px}
+.cbtn:hover,.cbtn.on{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:600}
+#carea{height:520px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;overflow:hidden;display:flex;align-items:center;justify-content:center;color:var(--muted)}
+#bot{display:grid;grid-template-columns:1fr 1.1fr 1fr;gap:12px;padding:10px 14px}
+@media(max-width:1100px){#bot{grid-template-columns:1fr}}
+.panel{background:var(--bg2);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.phd{padding:8px 12px;border-bottom:1px solid var(--border);font-size:10px;font-weight:700;letter-spacing:.7px;color:var(--muted);text-transform:uppercase;display:flex;align-items:center;justify-content:space-between}
+.pbdy{overflow-y:auto;max-height:400px}
+.ni{padding:9px 12px;border-bottom:1px solid var(--border);cursor:pointer}
+.ni:hover{background:var(--bg3)}.ni:last-child{border-bottom:none}
+.nihl{font-size:12px;line-height:1.4;font-weight:500;margin-bottom:3px}
+.nimeta{font-size:10px;color:var(--muted);display:flex;gap:6px;align-items:center}
+.nsrc{font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;text-transform:uppercase}
+.sr{background:#1d2d1d;color:#4ade80}.sc{background:#1d2030;color:#818cf8}.sb{background:#2d1a10;color:#fb923c}.sd{background:#1e2535;color:#94a3b8}
+.nt{color:var(--muted)}.nts{color:var(--yellow)}
+#nokey{padding:10px 12px;background:#1e2535;border-bottom:1px solid var(--border);font-size:11px;color:var(--muted);line-height:1.7}
+#nokey .lk{color:var(--blue);cursor:pointer;text-decoration:underline}
+#wlsec{padding:10px 14px}
+#wlctrls{display:flex;gap:8px;margin-bottom:10px;align-items:center}
+#wlinp{background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:6px;font-size:12px;width:130px}
+#wladd{background:var(--blue);border:none;color:#fff;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600}
+#smod{display:none;position:fixed;inset:0;z-index:9999}
+.sbk{position:absolute;inset:0;background:rgba(0,0,0,.7)}
+.sbox{position:relative;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:24px;max-width:440px;width:90%;margin:70px auto;z-index:1}
+.sbox h3{font-size:15px;font-weight:700;margin-bottom:16px}
+.sbox label{display:block;font-size:10px;color:var(--muted);margin:12px 0 4px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.sbox input{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:6px;font-size:13px}
+.sbox input:focus{outline:none;border-color:var(--blue)}
+.snote{font-size:11px;color:var(--muted);margin-top:14px;line-height:1.7;background:var(--bg3);padding:10px;border-radius:6px}
+.snote a{color:var(--blue)}
+.sbtns{display:flex;gap:8px;margin-top:18px;flex-wrap:wrap}
+.bp{background:var(--blue);border:none;color:#fff;padding:8px 18px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600}
+.bg2btn{background:transparent;border:1px solid var(--border);color:var(--muted);padding:8px 14px;border-radius:6px;cursor:pointer;font-size:13px}
+.bg2btn:hover{color:var(--text)}.bdgr{border-color:var(--red)!important;color:var(--red)!important}
+#astat{font-size:11px;margin-top:10px;min-height:16px}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+</style>
+</head>
+<body>
+
+<div id="hdr">
+  <div class="logo">📈 TradeDash</div>
+  <div class="hdr-mid">
+    <span id="clock">--:--:-- ET</span>
+    <span id="mbadge">--</span>
+  </div>
+  <div class="hdr-r">
+    <button id="setbtn" onclick="openS()">⚙ Alpaca Keys</button>
+  </div>
+</div>
+
+<!-- Settings Modal -->
+<div id="smod">
+  <div class="sbk" onclick="closeS()"></div>
+  <div class="sbox">
+    <h3>⚙ Alpaca API Keys — for Real-Time News</h3>
+    <label>API Key ID</label>
+    <input type="text" id="ak" placeholder="PKXXXXXXXXXXXXXXXXXXXXXXXX" autocomplete="off" spellcheck="false"/>
+    <label>Secret Key</label>
+    <input type="password" id="as" placeholder="Your secret key" autocomplete="off"/>
+    <div class="snote">
+      <strong>Note:</strong> Since the dashboard moved to GitHub Pages, you need to re-enter your Alpaca keys once — they're stored in this browser tab's storage.<br/><br/>
+      Don't have keys yet? → <a href="https://alpaca.markets" target="_blank">alpaca.markets</a> → Paper Trading → API Keys → Generate
+    </div>
+    <div id="astat"></div>
+    <div class="sbtns">
+      <button class="bp" onclick="saveS()">Save &amp; Test</button>
+      <button class="bg2btn" onclick="closeS()">Close</button>
+      <button class="bg2btn bdgr" onclick="clearS()">Clear</button>
+    </div>
+  </div>
+</div>
+
+<!-- PRICE TABLES — TradingView market-quotes (no API, no CORS, always works) -->
+<div class="mgrid">
+
+  <div class="pcard">
+    <div class="pchd">🇺🇸 US Indices + Fear + Dollar</div>
+    <div class="tradingview-widget-container">
+      <div class="tradingview-widget-container__widget"></div>
+      <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-quotes.js" async>
+      {"width":"100%","height":240,"symbolsGroups":[{"name":"US","symbols":[
+        {"name":"FOREXCOM:SPXUSD","displayName":"S&P 500"},
+        {"name":"FOREXCOM:NSXUSD","displayName":"NASDAQ 100"},
+        {"name":"FOREXCOM:DJI","displayName":"Dow Jones"},
+        {"name":"TVC:RUT","displayName":"Russell 2000"},
+        {"name":"TVC:VIX","displayName":"VIX — Fear"},
+        {"name":"TVC:DXY","displayName":"DXY — Dollar"}
+      ]}],"showSymbolLogo":false,"isTransparent":true,"colorTheme":"dark","locale":"en","largeChartUrl":""}
+      </script>
+    </div>
+  </div>
+
+  <div class="pcard">
+    <div class="pchd">🌏 Global Indices</div>
+    <div class="tradingview-widget-container">
+      <div class="tradingview-widget-container__widget"></div>
+      <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-quotes.js" async>
+      {"width":"100%","height":210,"symbolsGroups":[{"name":"Global","symbols":[
+        {"name":"TVC:NI225","displayName":"🇯🇵 Nikkei 225"},
+        {"name":"TVC:HSI","displayName":"🇭🇰 Hang Seng"},
+        {"name":"XETR:DAX","displayName":"🇩🇪 DAX"},
+        {"name":"FOREXCOM:UKXGBP","displayName":"🇬🇧 FTSE 100"},
+        {"name":"TVC:CAC40","displayName":"🇫🇷 CAC 40"}
+      ]}],"showSymbolLogo":false,"isTransparent":true,"colorTheme":"dark","locale":"en","largeChartUrl":""}
+      </script>
+    </div>
+  </div>
+
+  <div class="pcard">
+    <div class="pchd">⚡ Commodities</div>
+    <div class="tradingview-widget-container">
+      <div class="tradingview-widget-container__widget"></div>
+      <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-quotes.js" async>
+      {"width":"100%","height":210,"symbolsGroups":[{"name":"Commodities","symbols":[
+        {"name":"TVC:GOLD","displayName":"Gold ($/oz)"},
+        {"name":"TVC:SILVER","displayName":"Silver ($/oz)"},
+        {"name":"TVC:USOIL","displayName":"WTI Crude Oil"},
+        {"name":"TVC:NATGAS","displayName":"Natural Gas"},
+        {"name":"TVC:COPPER","displayName":"Copper (Dr.)"}
+      ]}],"showSymbolLogo":false,"isTransparent":true,"colorTheme":"dark","locale":"en","largeChartUrl":""}
+      </script>
+    </div>
+  </div>
+
+  <div class="pcard">
+    <div class="pchd">₿ Crypto &amp; FX</div>
+    <div class="tradingview-widget-container">
+      <div class="tradingview-widget-container__widget"></div>
+      <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-quotes.js" async>
+      {"width":"100%","height":210,"symbolsGroups":[{"name":"Crypto & FX","symbols":[
+        {"name":"BITSTAMP:BTCUSD","displayName":"₿ Bitcoin"},
+        {"name":"BITSTAMP:ETHUSD","displayName":"Ξ Ethereum"},
+        {"name":"FX:EURUSD","displayName":"EUR / USD"},
+        {"name":"FX:GBPUSD","displayName":"GBP / USD"},
+        {"name":"FX:USDJPY","displayName":"USD / JPY"}
+      ]}],"showSymbolLogo":false,"isTransparent":true,"colorTheme":"dark","locale":"en","largeChartUrl":""}
+      </script>
+    </div>
+  </div>
+
+</div>
+
+<!-- CHART -->
+<div id="csec">
+  <div id="cctrl">
+    <span class="sttl" style="margin-right:6px">CHART:</span>
+    <button class="cbtn" onclick="loadChart('FOREXCOM:SPXUSD','S&P 500',this)">S&P 500</button>
+    <button class="cbtn" onclick="loadChart('NASDAQ:NDX','NASDAQ',this)">NASDAQ</button>
+    <button class="cbtn" onclick="loadChart('FOREXCOM:DJI','DJI',this)">DJI</button>
+    <button class="cbtn" onclick="loadChart('TVC:VIX','VIX',this)">VIX</button>
+    <button class="cbtn" onclick="loadChart('TVC:DXY','DXY',this)">DXY</button>
+    <button class="cbtn" onclick="loadChart('TVC:GOLD','Gold',this)">Gold</button>
+    <button class="cbtn" onclick="loadChart('TVC:USOIL','WTI Oil',this)">WTI Oil</button>
+    <button class="cbtn" onclick="loadChart('TVC:NATGAS','Nat Gas',this)">Nat Gas</button>
+    <button class="cbtn" onclick="loadChart('TVC:COPPER','Copper',this)">Copper</button>
+    <button class="cbtn" onclick="loadChart('TVC:NI225','Nikkei',this)">Nikkei</button>
+    <button class="cbtn" onclick="loadChart('TVC:HSI','H.Seng',this)">H.Seng</button>
+    <button class="cbtn" onclick="loadChart('XETR:DAX','DAX',this)">DAX</button>
+    <button class="cbtn" onclick="loadChart('FX:EURUSD','EUR/USD',this)">EUR/USD</button>
+    <button class="cbtn" onclick="loadChart('BITSTAMP:BTCUSD','BTC',this)">BTC</button>
+  </div>
+  <div id="carea">Click any button above to load chart with RSI · MACD · Bollinger Bands</div>
+</div>
+
+<!-- BOTTOM ROW -->
+<div id="bot">
+  <div class="panel">
+    <div class="phd">📅 Economic Calendar <span style="font-weight:400;font-size:9px">US High-Impact</span></div>
+    <div class="pbdy" style="height:390px">
+      <div class="tradingview-widget-container" style="height:100%">
+        <div class="tradingview-widget-container__widget" style="height:100%"></div>
+        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
+        {"colorTheme":"dark","isTransparent":true,"width":"100%","height":"100%","locale":"en","importanceFilter":"0,1","countryFilter":"us"}
+        </script>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="phd">
+      📰 Market-Moving News
+      <div style="display:flex;align-items:center;gap:6px">
+        <span id="nlbl" style="font-weight:400;font-size:9px;color:var(--muted)"></span>
+        <span onclick="refreshNews()" style="cursor:pointer;color:var(--blue);font-size:13px" title="Refresh">↻</span>
+      </div>
+    </div>
+    <div id="nokey" style="display:none">
+      🔑 <span class="lk" onclick="openS()">Add Alpaca keys</span> for real-time news (re-enter since you're now on GitHub Pages).
+    </div>
+    <div id="nlist" class="pbdy"></div>
+  </div>
+
+  <div class="panel">
+    <div class="phd">🔥 Top Movers — Today</div>
+    <div class="pbdy" style="height:390px">
+      <div class="tradingview-widget-container" style="height:100%">
+        <div class="tradingview-widget-container__widget" style="height:100%"></div>
+        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-hotlists.js" async>
+        {"colorTheme":"dark","dateRange":"1D","exchange":"US","showChart":false,"locale":"en","isTransparent":true,"showSymbolLogo":false,"width":"100%","height":"100%"}
+        </script>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WATCHLIST -->
+<div id="wlsec">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+    <span class="sttl">📋 Watchlist</span>
+    <div id="wlctrls">
+      <input type="text" id="wlinp" placeholder="AAPL, NVDA..." onkeydown="if(event.key==='Enter')addWL()"/>
+      <button id="wladd" onclick="addWL()">+ Add</button>
+    </div>
+  </div>
+  <div id="wltv"></div>
+</div>
+<div style="height:24px"></div>
+
+<script>
+'use strict';
+
+// ─── CLOCK ────────────────────────────────────────────────────────────────────
+function getET(){return new Date(new Date().toLocaleString('en-US',{timeZone:'America/New_York'}));}
+function sess(){const e=getET(),d=e.getDay(),t=e.getHours()*60+e.getMinutes();if(d===0||d===6)return'closed';if(t<240)return'closed';if(t<570)return'pre';if(t<960)return'open';if(t<1200)return'ah';return'closed';}
+function tickClock(){
+  const e=getET(),p=n=>String(n).padStart(2,'0');
+  document.getElementById('clock').textContent=`${p(e.getHours())}:${p(e.getMinutes())}:${p(e.getSeconds())} ET`;
+  const s=sess(),b=document.getElementById('mbadge');
+  const M={pre:['PRE-MARKET','#1e3a5f','#60a5fa'],open:['MARKET OPEN','#14532d','#4ade80'],ah:['AFTER-HOURS','#2d1b69','#a78bfa'],closed:['CLOSED','#1a1a2e','#6b7280']};
+  const[t,bg,c]=M[s]||M.closed;b.textContent=t;b.style.cssText=`padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;background:${bg};color:${c}`;
+}
+setInterval(tickClock,1000);tickClock();
+
+// ─── CHART ────────────────────────────────────────────────────────────────────
+let aBtn=null;
+function loadChart(sym,lbl,el){
+  if(aBtn)aBtn.classList.remove('on');if(el){el.classList.add('on');aBtn=el;}
+  const a=document.getElementById('carea');
+  a.innerHTML='';a.style.cssText='height:520px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;overflow:hidden';
+  const w=document.createElement('div');w.className='tradingview-widget-container';w.style.height='520px';
+  const i=document.createElement('div');i.className='tradingview-widget-container__widget';i.style.height='520px';w.appendChild(i);
+  const s=document.createElement('script');s.type='text/javascript';
+  s.src='https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';s.async=true;
+  s.textContent=JSON.stringify({autosize:true,symbol:sym,interval:'D',timezone:'America/New_York',theme:'dark',style:'1',locale:'en',withdateranges:true,range:'3M',allow_symbol_change:true,details:true,studies:['RSI@tv-basicstudies','MACD@tv-basicstudies','BB@tv-basicstudies']});
+  w.appendChild(s);a.appendChild(w);
+}
+
+// ─── NEWS ─────────────────────────────────────────────────────────────────────
+function tf(url,ms=8000,opts={}){
+  const c=new AbortController(),t=setTimeout(()=>c.abort(),ms);
+  return fetch(url,{...opts,signal:c.signal}).then(r=>{clearTimeout(t);return r}).catch(e=>{clearTimeout(t);throw e});
+}
+const HOT=['fed','federal reserve','powell','fomc','rate cut','rate hike','inflation','cpi','pce','nonfarm','gdp','recession','opec','crude','iran','russia','ukraine','china','taiwan','tariff','trade war','sanctions','war','ceasefire','deal','merger','acquisition','earnings','guidance','downgrade','upgrade','yield','treasury','bond','default','bankruptcy','stimulus','nvidia','apple','microsoft','meta','tesla','amazon','google','jpmorgan','bitcoin','crypto','ipo'];
+const isHot=t=>{const l=(t||'').toLowerCase();return HOT.some(w=>l.includes(w));};
+const ageStr=ts=>{const m=Math.floor((Date.now()/1000-ts)/60);if(m<1)return'just now';if(m<60)return m+'m ago';const h=Math.floor(m/60);if(h<24)return h+'h ago';return Math.floor(h/24)+'d ago';};
+function scls(pub){const p=(pub||'').toLowerCase();if(p.includes('reuters')||p.includes('associated press'))return'sr';if(p.includes('cnbc')||p.includes('marketwatch')||p.includes('bloomberg'))return'sc';if(p.includes('benzinga')||p.includes('seeking alpha'))return'sb';return'sd';}
+
+function renderNews(items,src){
+  document.getElementById('nlbl').textContent=`via ${src}`;
+  const list=document.getElementById('nlist');list.innerHTML='';list.style.height='';
+  if(!items?.length){list.innerHTML='<div style="padding:16px;color:var(--muted);font-size:12px">No news loaded.</div>';return;}
+  const sorted=[...items].sort((a,b)=>(b.time||0)-(a.time||0));
+  const hot=sorted.filter(n=>isHot(n.title)),rest=sorted.filter(n=>!isHot(n.title));
+  [...hot,...rest].slice(0,50).forEach(n=>{
+    const div=document.createElement('div');div.className='ni';div.onclick=()=>window.open(n.link,'_blank');
+    const stale=n.time&&(Date.now()/1000-n.time)>4*3600;
+    div.innerHTML=`<div class="nihl">${isHot(n.title)?'⚡ ':''}${n.title}</div><div class="nimeta"><span class="nsrc ${scls(n.publisher)}">${n.publisher||'News'}</span>${n.time?`<span class="${stale?'nts':'nt'}">${ageStr(n.time)}${stale?' ⚠':''}</span>`:''}</div>`;
+    list.appendChild(div);
+  });
+}
+
+async function refreshNews(){
+  const k=localStorage.getItem('alpaca_key_id'),s=localStorage.getItem('alpaca_secret');
+  document.getElementById('nokey').style.display=k?'none':'block';
+  document.getElementById('nlbl').textContent='Fetching...';
+  // 1. Alpaca
+  if(k&&s){
+    try{
+      const r=await tf('https://data.alpaca.markets/v1beta1/news?sort=desc&limit=50',10000,{headers:{'APCA-API-KEY-ID':k,'APCA-API-SECRET-KEY':s}});
+      if(r.ok){const d=await r.json();const items=(d.news||[]).map(n=>({title:n.headline,link:n.url,publisher:n.source,time:Math.floor(new Date(n.created_at).getTime()/1000)}));if(items.length){renderNews(items,'Alpaca (real-time)');return;}}
+    }catch{}
+  }
+  // 2. Yahoo Finance news
+  try{
+    const r=await tf('https://query2.finance.yahoo.com/v1/finance/search?q=stock+market+today&newsCount=30',6000);
+    if(r.ok){const d=await r.json();const items=(d.news||[]).map(n=>({title:n.title,link:n.link,publisher:n.publisher,time:n.providerPublishTime||0}));if(items.length){renderNews(items,'Yahoo Finance');return;}}
+  }catch{}
+  // 3. RSS
+  const feeds=[{url:'https://feeds.reuters.com/reuters/businessNews',name:'Reuters'},{url:'https://feeds.content.dowjones.io/public/rss/mw_topstories',name:'MarketWatch'},{url:'https://www.cnbc.com/id/100003114/device/rss/rss.html',name:'CNBC'}];
+  for(const f of feeds){
+    try{
+      const r=await tf(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(f.url)}&count=25`,8000);
+      if(r.ok){const d=await r.json();if(d.items?.length){renderNews(d.items.map(it=>({title:it.title,link:it.link,publisher:f.name,time:it.pubDate?Math.floor(new Date(it.pubDate).getTime()/1000):0})),f.name);return;}}
+    }catch{}
+  }
+  // 4. TradingView fallback
+  document.getElementById('nlbl').textContent='TradingView';
+  const list=document.getElementById('nlist');list.style.height='390px';
+  list.innerHTML='<div class="tradingview-widget-container" style="height:390px"><div class="tradingview-widget-container__widget" style="height:390px"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>{"feedMode":"all_symbols","isTransparent":true,"displayMode":"regular","width":"100%","height":"100%","colorTheme":"dark","locale":"en"}<\/script></div>';
+}
+
+// ─── WATCHLIST ─────────────────────────────────────────────────────────────────
+const WLK='tdwl_v6';
+function loadWL(){try{return JSON.parse(localStorage.getItem(WLK))||['AAPL','MSFT','NVDA','AMZN','GOOGL','META','TSLA','AMD','JPM','NFLX'];}catch{return[];}}
+function saveWL(l){localStorage.setItem(WLK,JSON.stringify(l));}
+function addWL(){const i=document.getElementById('wlinp'),r=i.value.trim().toUpperCase();if(!r)return;const syms=r.split(/[\s,]+/).filter(Boolean),wl=loadWL();syms.forEach(x=>{if(x&&!wl.includes(x))wl.push(x);});saveWL(wl);i.value='';renderWL();}
+function renderWL(){
+  const wl=loadWL(),c=document.getElementById('wltv');c.innerHTML='';
+  const w=document.createElement('div');w.className='tradingview-widget-container';
+  const i=document.createElement('div');i.className='tradingview-widget-container__widget';w.appendChild(i);
+  const s=document.createElement('script');s.type='text/javascript';
+  s.src='https://s3.tradingview.com/external-embedding/embed-widget-market-quotes.js';s.async=true;
+  s.textContent=JSON.stringify({width:'100%',height:'auto',symbolsGroups:[{name:'My Watchlist',symbols:wl.map(x=>({name:'NASDAQ:'+x,displayName:x}))}],showSymbolLogo:false,isTransparent:true,colorTheme:'dark',locale:'en'});
+  w.appendChild(s);c.appendChild(w);
+}
+
+// ─── SETTINGS ─────────────────────────────────────────────────────────────────
+function openS(){const k=localStorage.getItem('alpaca_key_id')||'';document.getElementById('ak').value=k;document.getElementById('as').value=k?'••••••••••••':'';document.getElementById('astat').textContent=k?'✅ Keys saved':'⚠ No keys yet — enter to get real-time news';document.getElementById('smod').style.display='block';}
+function closeS(){document.getElementById('smod').style.display='none';}
+async function saveS(){
+  const k=document.getElementById('ak').value.trim(),s=document.getElementById('as').value.trim();
+  if(!k||(s==='••••••••••••'&&!localStorage.getItem('alpaca_secret'))){document.getElementById('astat').textContent='⚠ Enter both Key ID and Secret';return;}
+  localStorage.setItem('alpaca_key_id',k);if(s&&s!=='••••••••••••')localStorage.setItem('alpaca_secret',s);
+  document.getElementById('astat').textContent='Testing connection...';
+  try{
+    const sec=localStorage.getItem('alpaca_secret');
+    const r=await tf('https://data.alpaca.markets/v1beta1/news?limit=1',7000,{headers:{'APCA-API-KEY-ID':k,'APCA-API-SECRET-KEY':sec}});
+    if(r.ok){document.getElementById('astat').textContent='✅ Connected! Real-time news active.';setTimeout(()=>{closeS();refreshNews();},1200);}
+    else document.getElementById('astat').textContent=`❌ Auth failed (${r.status}) — check your keys`;
+  }catch{document.getElementById('astat').textContent='⚠ Network error. Keys saved.';setTimeout(()=>{closeS();refreshNews();},1500);}
+}
+function clearS(){['alpaca_key_id','alpaca_secret'].forEach(k=>localStorage.removeItem(k));document.getElementById('ak').value='';document.getElementById('as').value='';document.getElementById('astat').textContent='Cleared.';setTimeout(closeS,800);}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+refreshNews();
+renderWL();
+</script>
+</body>
+</html>

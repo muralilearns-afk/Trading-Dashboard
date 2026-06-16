@@ -21,17 +21,19 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-s
 @media(max-width:1100px){.mgrid{grid-template-columns:repeat(2,1fr)}}
 .pcard{background:var(--bg2);border:1px solid var(--border);border-radius:8px;overflow:hidden}
 .pchd{padding:7px 12px;font-size:10px;font-weight:700;letter-spacing:.7px;color:var(--muted);text-transform:uppercase;border-bottom:1px solid var(--border)}
+.pcins{padding:6px 12px;font-size:11px;color:var(--text);background:#162032;border-bottom:1px solid var(--border);line-height:1.4;min-height:16px}
+.pcins .lk{color:var(--blue);cursor:pointer;text-decoration:underline}
 #csec{padding:10px 14px}
 #cctrl{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;align-items:center}
 .sttl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--muted)}
 .cbtn{background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:3px 9px;border-radius:4px;cursor:pointer;font-size:11px}
 .cbtn:hover,.cbtn.on{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:600}
-#carea{height:520px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;overflow:hidden;display:flex;align-items:center;justify-content:center;color:var(--muted)}
-#bot{display:grid;grid-template-columns:1fr 1.1fr 1fr;gap:12px;padding:10px 14px}
+#carea{height:440px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;overflow:hidden;display:flex;align-items:center;justify-content:center;color:var(--muted)}
+#bot{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:12px;padding:10px 14px}
 @media(max-width:1100px){#bot{grid-template-columns:1fr}}
 .panel{background:var(--bg2);border:1px solid var(--border);border-radius:8px;overflow:hidden}
 .phd{padding:8px 12px;border-bottom:1px solid var(--border);font-size:10px;font-weight:700;letter-spacing:.7px;color:var(--muted);text-transform:uppercase;display:flex;align-items:center;justify-content:space-between}
-.pbdy{overflow-y:auto;max-height:400px}
+.pbdy{overflow-y:auto;max-height:480px}
 .ni{padding:9px 12px;border-bottom:1px solid var(--border);cursor:pointer}
 .ni:hover{background:var(--bg3)}.ni:last-child{border-bottom:none}
 .nihl{font-size:12px;line-height:1.4;font-weight:500;margin-bottom:3px}
@@ -81,13 +83,13 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-s
 <div id="smod">
   <div class="sbk" onclick="closeS()"></div>
   <div class="sbox">
-    <h3>⚙ Alpaca API Keys — for Real-Time News</h3>
+    <h3>⚙ Alpaca API Keys — for Real-Time News &amp; Insights</h3>
     <label>API Key ID</label>
     <input type="text" id="ak" placeholder="PKXXXXXXXXXXXXXXXXXXXXXXXX" autocomplete="off" spellcheck="false"/>
     <label>Secret Key</label>
     <input type="password" id="as" placeholder="Your secret key" autocomplete="off"/>
     <div class="snote">
-      <strong>Note:</strong> Since the dashboard moved to GitHub Pages, you need to re-enter your Alpaca keys once — they're stored in this browser tab's storage.<br/><br/>
+      <strong>Note:</strong> These keys are stored only in this browser's local storage and sent directly from your browser to Alpaca — they are never saved in this site's code or on any server. That also means: (1) they don't follow you to a different browser/device — you re-enter them there too, and (2) on a shared/public computer, anyone using that browser afterward could read them back out of local storage. Use Alpaca's free <b>paper-trading</b> keys (market data only, no funds attached) rather than live-trading keys, and avoid entering them on a public machine.<br/><br/>
       Don't have keys yet? → <a href="https://alpaca.markets" target="_blank">alpaca.markets</a> → Paper Trading → API Keys → Generate
     </div>
     <div id="astat"></div>
@@ -104,6 +106,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-s
 
   <div class="pcard">
     <div class="pchd">🇺🇸 US Indices + Fear + Dollar</div>
+    <div class="pcins" id="ins-us">Loading insight…</div>
     <div class="tradingview-widget-container">
       <div class="tradingview-widget-container__widget"></div>
       <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-quotes.js" async>
@@ -121,6 +124,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-s
 
   <div class="pcard">
     <div class="pchd">🌏 Global Indices</div>
+    <div class="pcins" id="ins-global">Loading insight…</div>
     <div class="tradingview-widget-container">
       <div class="tradingview-widget-container__widget"></div>
       <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-quotes.js" async>
@@ -137,6 +141,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-s
 
   <div class="pcard">
     <div class="pchd">⚡ Commodities</div>
+    <div class="pcins" id="ins-comm">Loading insight…</div>
     <div class="tradingview-widget-container">
       <div class="tradingview-widget-container__widget"></div>
       <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-quotes.js" async>
@@ -153,6 +158,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-s
 
   <div class="pcard">
     <div class="pchd">₿ Crypto &amp; FX</div>
+    <div class="pcins" id="ins-crypto">Loading insight…</div>
     <div class="tradingview-widget-container">
       <div class="tradingview-widget-container__widget"></div>
       <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-quotes.js" async>
@@ -195,11 +201,11 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-s
 <div id="bot">
   <div class="panel">
     <div class="phd">📅 Economic Calendar <span style="font-weight:400;font-size:9px">US High-Impact</span></div>
-    <div class="pbdy" style="height:390px">
+    <div class="pbdy" style="height:480px">
       <div class="tradingview-widget-container" style="height:100%">
         <div class="tradingview-widget-container__widget" style="height:100%"></div>
         <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
-        {"colorTheme":"dark","isTransparent":true,"width":"100%","height":"100%","locale":"en","importanceFilter":"0,1","countryFilter":"us"}
+        {"colorTheme":"dark","isTransparent":true,"width":"100%","height":"100%","locale":"en","importanceFilter":"1","countryFilter":"us"}
         </script>
       </div>
     </div>
@@ -214,14 +220,14 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-s
       </div>
     </div>
     <div id="nokey" style="display:none">
-      🔑 <span class="lk" onclick="openS()">Add Alpaca keys</span> for real-time news (re-enter since you're now on GitHub Pages).
+      🔑 <span class="lk" onclick="openS()">Add Alpaca keys</span> for real-time news &amp; card insights (re-enter since you're now on GitHub Pages).
     </div>
-    <div id="nlist" class="pbdy"></div>
+    <div id="nlist" class="pbdy" style="height:480px"></div>
   </div>
 
   <div class="panel">
     <div class="phd">🔥 Top Movers — Today</div>
-    <div class="pbdy" style="height:390px">
+    <div class="pbdy" style="height:480px">
       <div class="tradingview-widget-container" style="height:100%">
         <div class="tradingview-widget-container__widget" style="height:100%"></div>
         <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-hotlists.js" async>
@@ -265,9 +271,9 @@ let aBtn=null;
 function loadChart(sym,lbl,el){
   if(aBtn)aBtn.classList.remove('on');if(el){el.classList.add('on');aBtn=el;}
   const a=document.getElementById('carea');
-  a.innerHTML='';a.style.cssText='height:520px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;overflow:hidden';
-  const w=document.createElement('div');w.className='tradingview-widget-container';w.style.height='520px';
-  const i=document.createElement('div');i.className='tradingview-widget-container__widget';i.style.height='520px';w.appendChild(i);
+  a.innerHTML='';a.style.cssText='height:440px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;overflow:hidden';
+  const w=document.createElement('div');w.className='tradingview-widget-container';w.style.height='440px';
+  const i=document.createElement('div');i.className='tradingview-widget-container__widget';i.style.height='440px';w.appendChild(i);
   const s=document.createElement('script');s.type='text/javascript';
   s.src='https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';s.async=true;
   s.textContent=JSON.stringify({autosize:true,symbol:sym,interval:'D',timezone:'America/New_York',theme:'dark',style:'1',locale:'en',withdateranges:true,range:'3M',allow_symbol_change:true,details:true,studies:['RSI@tv-basicstudies','MACD@tv-basicstudies','BB@tv-basicstudies']});
@@ -324,8 +330,8 @@ async function refreshNews(){
   }
   // 4. TradingView fallback
   document.getElementById('nlbl').textContent='TradingView';
-  const list=document.getElementById('nlist');list.style.height='390px';
-  list.innerHTML='<div class="tradingview-widget-container" style="height:390px"><div class="tradingview-widget-container__widget" style="height:390px"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>{"feedMode":"all_symbols","isTransparent":true,"displayMode":"regular","width":"100%","height":"100%","colorTheme":"dark","locale":"en"}<\/script></div>';
+  const list=document.getElementById('nlist');list.style.height='480px';
+  list.innerHTML='<div class="tradingview-widget-container" style="height:480px"><div class="tradingview-widget-container__widget" style="height:480px"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>{"feedMode":"all_symbols","isTransparent":true,"displayMode":"regular","width":"100%","height":"100%","colorTheme":"dark","locale":"en"}<\/script></div>';
 }
 
 // ─── WATCHLIST ─────────────────────────────────────────────────────────────────
@@ -335,12 +341,98 @@ function saveWL(l){localStorage.setItem(WLK,JSON.stringify(l));}
 function addWL(){const i=document.getElementById('wlinp'),r=i.value.trim().toUpperCase();if(!r)return;const syms=r.split(/[\s,]+/).filter(Boolean),wl=loadWL();syms.forEach(x=>{if(x&&!wl.includes(x))wl.push(x);});saveWL(wl);i.value='';renderWL();}
 function renderWL(){
   const wl=loadWL(),c=document.getElementById('wltv');c.innerHTML='';
-  const w=document.createElement('div');w.className='tradingview-widget-container';
+  // Render the widget tall enough to fit every ticker with no internal cutoff,
+  // then clip the OUTER box to ~3 rows and let the user scroll inside it.
+  const rowH=33,headH=32,fullH=headH+Math.max(wl.length,1)*rowH,boxH=headH+3*rowH;
+  c.style.cssText=`height:${boxH}px;overflow-y:auto;border:1px solid var(--border);border-radius:8px`;
+  const w=document.createElement('div');w.className='tradingview-widget-container';w.style.height=fullH+'px';
   const i=document.createElement('div');i.className='tradingview-widget-container__widget';w.appendChild(i);
   const s=document.createElement('script');s.type='text/javascript';
   s.src='https://s3.tradingview.com/external-embedding/embed-widget-market-quotes.js';s.async=true;
-  s.textContent=JSON.stringify({width:'100%',height:'auto',symbolsGroups:[{name:'My Watchlist',symbols:wl.map(x=>({name:'NASDAQ:'+x,displayName:x}))}],showSymbolLogo:false,isTransparent:true,colorTheme:'dark',locale:'en'});
+  s.textContent=JSON.stringify({width:'100%',height:fullH,symbolsGroups:[{name:'My Watchlist',symbols:wl.map(x=>({name:'NASDAQ:'+x,displayName:x}))}],showSymbolLogo:false,isTransparent:true,colorTheme:'dark',locale:'en'});
   w.appendChild(s);c.appendChild(w);
+}
+
+// ─── INSIGHTS — one-line read on each card, derived from real Alpaca data ──────
+// Indices/VIX/DXY have no Alpaca symbol, so we read their closest tradable
+// US-listed ETF proxies (same instruments funds use to hedge this exposure).
+const PROXY={
+  us:{SPY:'S&P',QQQ:'Nasdaq',DIA:'Dow',IWM:'R2000',VIXY:'VIX-proxy',UUP:'Dollar'},
+  global:{EWJ:'Japan',FXI:'China/HK',EWG:'Germany',EWU:'UK',EWQ:'France'},
+  comm:{GLD:'Gold',SLV:'Silver',USO:'Oil',UNG:'NatGas',CPER:'Copper'}
+};
+const pctChg=(now,prev)=>(prev&&now!=null)?((now-prev)/prev*100):null;
+const fmtP=p=>p==null?'—':(p>=0?'+':'')+p.toFixed(2)+'%';
+function setIns(id,html){const el=document.getElementById(id);if(el)el.innerHTML=html;}
+const noKeyIns='🔑 <span class="lk" onclick="openS()">Add Alpaca keys</span> for live insight';
+
+async function fetchStockChanges(symbols,k,s){
+  const r=await tf(`https://data.alpaca.markets/v2/stocks/snapshots?symbols=${symbols.join(',')}`,8000,{headers:{'APCA-API-KEY-ID':k,'APCA-API-SECRET-KEY':s}});
+  if(!r.ok)throw new Error('snap '+r.status);
+  const d=await r.json();const snaps=d.snapshots||d||{};
+  const out={};
+  symbols.forEach(sym=>{
+    const sn=snaps[sym];if(!sn)return;
+    const now=sn.latestTrade?.p??sn.dailyBar?.c;
+    const prev=sn.prevDailyBar?.c??sn.dailyBar?.o;
+    out[sym]=pctChg(now,prev);
+  });
+  return out;
+}
+async function fetchCryptoChanges(k,s){
+  const r=await tf('https://data.alpaca.markets/v1beta3/crypto/us/snapshots?symbols=BTC%2FUSD,ETH%2FUSD',8000,{headers:{'APCA-API-KEY-ID':k,'APCA-API-SECRET-KEY':s}});
+  if(!r.ok)throw new Error('csnap '+r.status);
+  const d=await r.json();const snaps=d.snapshots||{};
+  const out={};
+  ['BTC/USD','ETH/USD'].forEach(sym=>{
+    const sn=snaps[sym];if(!sn)return;
+    const now=sn.latestTrade?.p??sn.dailyBar?.c;
+    const prev=sn.prevDailyBar?.c??sn.dailyBar?.o;
+    out[sym]=pctChg(now,prev);
+  });
+  return out;
+}
+function rankIns(map,changes){
+  const arr=Object.keys(map).map(sym=>[sym,changes[sym]]).filter(x=>x[1]!=null);
+  if(!arr.length)return null;
+  arr.sort((a,b)=>b[1]-a[1]);
+  return{lead:arr[0],lag:arr[arr.length-1],all:arr};
+}
+
+async function refreshInsights(){
+  const k=localStorage.getItem('alpaca_key_id'),s=localStorage.getItem('alpaca_secret');
+  if(!k||!s){['ins-us','ins-global','ins-comm','ins-crypto'].forEach(id=>setIns(id,noKeyIns));return;}
+
+  try{
+    const us=await fetchStockChanges(Object.keys(PROXY.us),k,s);
+    const r=rankIns({SPY:1,QQQ:1,DIA:1,IWM:1},us);
+    if(r){
+      const vix=us.VIXY,dol=us.UUP,upCount=r.all.filter(x=>x[1]>0).length;
+      const tone=vix!=null?(vix<-0.3&&upCount>=r.all.length-1?'Risk-on':vix>0.3&&upCount<=1?'Risk-off':'Mixed'):'Mixed';
+      setIns('ins-us',`${tone}: ${PROXY.us[r.lead[0]]} leads ${fmtP(r.lead[1])} · ${PROXY.us[r.lag[0]]} ${fmtP(r.lag[1])}${dol!=null?` · $ ${fmtP(dol)}`:''}`);
+    }else setIns('ins-us','Insight unavailable');
+  }catch{setIns('ins-us','Insight unavailable');}
+
+  try{
+    const gl=await fetchStockChanges(Object.keys(PROXY.global),k,s);
+    const r=rankIns(PROXY.global,gl);
+    setIns('ins-global',r?`${PROXY.global[r.lead[0]]} leads ${fmtP(r.lead[1])} · ${PROXY.global[r.lag[0]]} lags ${fmtP(r.lag[1])}`:'Insight unavailable');
+  }catch{setIns('ins-global','Insight unavailable');}
+
+  try{
+    const cm=await fetchStockChanges(Object.keys(PROXY.comm),k,s);
+    const r=rankIns(PROXY.comm,cm);
+    setIns('ins-comm',r?`${PROXY.comm[r.lead[0]]} leads ${fmtP(r.lead[1])} · ${PROXY.comm[r.lag[0]]} ${fmtP(r.lag[1])}`:'Insight unavailable');
+  }catch{setIns('ins-comm','Insight unavailable');}
+
+  try{
+    const cr=await fetchCryptoChanges(k,s);
+    const btc=cr['BTC/USD'],eth=cr['ETH/USD'];
+    if(btc!=null||eth!=null){
+      const tone=(btc>0&&eth>0)?'Crypto risk-on':(btc<0&&eth<0)?'Crypto risk-off':'Crypto mixed';
+      setIns('ins-crypto',`${tone}: BTC ${fmtP(btc)} · ETH ${fmtP(eth)}`);
+    }else setIns('ins-crypto','Insight unavailable');
+  }catch{setIns('ins-crypto','Insight unavailable');}
 }
 
 // ─── SETTINGS ─────────────────────────────────────────────────────────────────
@@ -354,15 +446,17 @@ async function saveS(){
   try{
     const sec=localStorage.getItem('alpaca_secret');
     const r=await tf('https://data.alpaca.markets/v1beta1/news?limit=1',7000,{headers:{'APCA-API-KEY-ID':k,'APCA-API-SECRET-KEY':sec}});
-    if(r.ok){document.getElementById('astat').textContent='✅ Connected! Real-time news active.';setTimeout(()=>{closeS();refreshNews();},1200);}
+    if(r.ok){document.getElementById('astat').textContent='✅ Connected! Real-time news & insights active.';setTimeout(()=>{closeS();refreshNews();refreshInsights();},1200);}
     else document.getElementById('astat').textContent=`❌ Auth failed (${r.status}) — check your keys`;
-  }catch{document.getElementById('astat').textContent='⚠ Network error. Keys saved.';setTimeout(()=>{closeS();refreshNews();},1500);}
+  }catch{document.getElementById('astat').textContent='⚠ Network error. Keys saved.';setTimeout(()=>{closeS();refreshNews();refreshInsights();},1500);}
 }
 function clearS(){['alpaca_key_id','alpaca_secret'].forEach(k=>localStorage.removeItem(k));document.getElementById('ak').value='';document.getElementById('as').value='';document.getElementById('astat').textContent='Cleared.';setTimeout(closeS,800);}
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 refreshNews();
+refreshInsights();
 renderWL();
+setInterval(refreshInsights,5*60*1000);
 </script>
 </body>
 </html>
